@@ -11,16 +11,19 @@ st.title("AI Journalist Agent 🗞️")
 st.caption("Generate High-quality articles with AI Journalist by researching, wriritng and editing quality articles on autopilot using GPT-4o")
 
 # Get OpenAI API key from user
-openai_api_key = st.text_input("Enter OpenAI API Key to access GPT-4o", type="password")
+#openai_api_key = st.text_input("Enter OpenAI API Key to access GPT-4o", type="password")
+openai_api_key = st.secrets.OPENAI_PROD_API_KEY
+openai_base_url = st.secrets.OPENAI_API_BASE
 
 # Get SerpAPI key from the user
-serp_api_key = st.text_input("Enter Serp API Key for Search functionality", type="password")
+#serp_api_key = st.text_input("Enter Serp API Key for Search functionality", type="password")
+serp_api_key = st.secrets.SERP_API_KEY
 
 if openai_api_key and serp_api_key:
     searcher = Assistant(
         name="Searcher",
         role="Searches for top URLs based on a topic",
-        llm=OpenAIChat(model="gpt-4o", api_key=openai_api_key),
+        llm=OpenAIChat(model="gpt-3.5-turbo-0125", api_key=openai_api_key, base_url=openai_base_url),
         description=dedent(
             """\
         You are a world-class journalist for the New York Times. Given a topic, generate a list of 3 search terms
@@ -40,7 +43,7 @@ if openai_api_key and serp_api_key:
     writer = Assistant(
         name="Writer",
         role="Retrieves text from URLs and writes a high-quality article",
-        llm=OpenAIChat(model="gpt-4o", api_key=openai_api_key),
+        llm=OpenAIChat(model="gpt-3.5-turbo-0125", api_key=openai_api_key, base_url=openai_base_url),
         description=dedent(
             """\
         You are a senior writer for the New York Times. Given a topic and a list of URLs,
@@ -65,7 +68,7 @@ if openai_api_key and serp_api_key:
 
     editor = Assistant(
         name="Editor",
-        llm=OpenAIChat(model="gpt-4o", api_key=openai_api_key),
+        llm=OpenAIChat(model="gpt-3.5-turbo-0125", api_key=openai_api_key, base_url=openai_base_url),
         team=[searcher, writer],
         description="You are a senior NYT editor. Given a topic, your goal is to write a NYT worthy article.",
         instructions=[
